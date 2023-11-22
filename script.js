@@ -14,6 +14,7 @@ function getInputData() {
 }
 
 function calcDoublesBets(firstObject, inputList, profit, betNumber) {
+  if(!betNumber) return 0;
   if (inputList.length == 0){ 
     console.log("list empty")
 
@@ -46,11 +47,30 @@ function makeCalc() {
   let bet = document.getElementById('bet').value;
   let inputList = getInputData();
   let profitText = document.getElementById('profit');
+  let singlesBet = document.getElementById('singles').value;
+  let profitSingles = calcSinglesBets(inputList);
   if(inputList.length > 1){
-  profitText.innerText = calcDoublesBets(inputList[0], inputList.slice(1), 0, bet) - bet * ticketsSum[inputList.length - 1];
+  profitText.innerText = calcDoublesBets(inputList[0], inputList.slice(1), 0, bet) - bet * ticketsSum[inputList.length - 1] + profitSingles;
     
   }
   else{
-     profitText.innerText = - bet * ticketsSum[inputList.length - 1];
+     profitText.innerText = - bet * ticketsSum[inputList.length - 1]
+       +profitSingles;
   }
+  let cost = document.getElementById('cost');
+  cost.innerText = bet * ticketsSum[inputList.length - 1] + inputList.length * singlesBet;
+}
+
+function calcSinglesBets(inputList) {
+  let betNumber = document.getElementById('singles').value;
+  if(!betNumber) return 0;
+  let profit = 0;
+  if (inputList.length == 0){ 
+    return 0
+  }
+  for(let i = 0; i < inputList.length; i++){
+    if(inputList[i].check == true)
+    profit += inputList[i].number * betNumber;
+  }
+  return profit - betNumber*inputList.length;
 }
