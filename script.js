@@ -45,20 +45,23 @@ function calcDoublesBets(firstObject, inputList, profit, betNumber) {
 
 function makeCalc() {
   let bet = document.getElementById('bet').value;
+  let parlayCost = document.getElementById('parlay').value;
   let inputList = getInputData();
   let profitText = document.getElementById('profit');
   let singlesBet = document.getElementById('singles').value;
   let profitSingles = calcSinglesBets(inputList);
+  let profitParlay = calcParlayBets(inputList);
+  console.log("profit parlay: "+profitParlay)
   if(inputList.length > 1){
-  profitText.innerText = calcDoublesBets(inputList[0], inputList.slice(1), 0, bet) - bet * ticketsSum[inputList.length - 1] + profitSingles;
+  profitText.innerText = calcDoublesBets(inputList[0], inputList.slice(1), 0, bet) - bet * ticketsSum[inputList.length - 1] + profitSingles + profitParlay;
     
   }
   else{
-     profitText.innerText = - bet * ticketsSum[inputList.length - 1]
-       +profitSingles;
+     profitText.innerText = parseInt(- bet * ticketsSum[inputList.length - 1]
+       +profitSingles);
   }
   let cost = document.getElementById('cost');
-  cost.innerText = bet * ticketsSum[inputList.length - 1] + inputList.length * singlesBet;
+  cost.innerText = parseInt( bet * ticketsSum[inputList.length - 1] + inputList.length * singlesBet) +parseInt( parlayCost);
 }
 
 function calcSinglesBets(inputList) {
@@ -73,4 +76,28 @@ function calcSinglesBets(inputList) {
     profit += inputList[i].number * betNumber;
   }
   return profit - betNumber*inputList.length;
+}
+
+function calcParlayBets(inputList) {
+  let betNumber = parseInt(document.getElementById('parlay').value);
+  let winRateTotal = document.getElementById('winRate');
+  console.log(typeof betNumber)
+  if(!betNumber) return 0;
+  let winRate = 1;
+  if (inputList.length == 0){ 
+    return 0;
+  }
+  let lost = false;
+  for(let i = 0; i < inputList.length; i++){
+    winRate *= inputList[i].number;
+    if(inputList[i].check == false)
+      lost = true;
+
+    console.log(winRate * betNumber - betNumber)
+  }
+  winRateTotal.innerText = parseInt(winRate);
+  if(!lost)
+  return winRate * betNumber - betNumber;
+  else
+    return -betNumber;
 }
